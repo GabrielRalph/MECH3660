@@ -1,0 +1,124 @@
+body{
+  margin: 50px;
+  background: rgb(240, 235, 230);
+  font-family: Roboto;
+}
+
+.page{
+  background: rgb(255, 250, 245);
+  max-width: 100vh;
+  margin: auto;
+  padding: 50px;
+}
+
+h1{
+  margin-top: 0;
+}
+
+
+.gcode_utility{
+  width: 100%;
+}
+
+.gcode_svg_box{
+  width: calc(100% - 270px);
+}
+
+.gcode_code_box{
+  width: 270px;
+  vertical-align: top;
+  height: 500px;
+}
+.commands{
+  height: 100%;
+  overflow: scroll;
+}
+h5{margin:0}
+
+svg{
+  width: 100%;
+  transform: scale(1, -1);
+}
+text{
+  transform: scale(1, -1);
+}
+path{
+    stroke-linecap: round;
+}
+
+
+
+#commands-table{
+  height: 100%;
+  overflow: scroll;
+  padding-left: 10px;
+}
+
+#commands-table table{
+  margin: 0;
+  width: 100%;
+}
+
+/* width */
+#commands-table::-webkit-scrollbar {
+  width: 7px;
+  height: 0px;
+}
+
+/* Track */
+#commands-table::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+#commands-table::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+#commands-table::-webkit-scrollbar-thumb:hover {
+  background: #883eff;
+}
+
+
+h6{
+  margin: 5px 0;
+  font-size: 10px;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+h6 .comment::after {
+  content: " ";
+  position: absolute;
+  top: -14px; /* At the bottom of the tooltip */
+  left: -5px;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent black;
+}
+/* Tooltip text */
+h6 .comment {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+
+  width: 160px;
+  top: 100%;
+  left: 0;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+h6:hover .comment {
+  visibility: visible;
+}
