@@ -1,4 +1,4 @@
-var list = ['a1_a'];
+var list = ['a1parta'];
 var html = ''
 
 for(var i in list){
