@@ -1,20 +1,24 @@
 
 function getGCODE(file, callback)
 {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                gcodeToJson(allText, callback)
-            }
-        }
-    }
-    rawFile.send(null);
+    // var rawFile = new XMLHttpsRequest();
+    // rawFile.open("GET", file, false);
+    // rawFile.onreadystatechange = function ()
+    // {
+    //     if(rawFile.readyState === 4)
+    //     {
+    //         if(rawFile.status === 200 || rawFile.status == 0)
+    //         {
+    //             var allText = rawFile.responseText;
+    //             gcodeToJson(allText, callback)
+    //         }
+    //     }
+    // }
+    // rawFile.send(null);
+    var iframe = document.getElementById('code');
+    var code = iframe.contentDocument || iframe.contentWindow.document;
+    code = code.getElementsByTagName('PRE')[0].innerHTML;
+    gcodeToJson(code, callback)
 }
 let gcodeToJson = (text, callback) => {
   var table = document.createElement("TABLE")

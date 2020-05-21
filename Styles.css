@@ -47,7 +47,9 @@ path{
 }
 
 
-
+#code{
+  display: none;
+}
 #commands-table{
   height: 100%;
   overflow: scroll;
