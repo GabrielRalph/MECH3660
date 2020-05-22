@@ -1,3 +1,12 @@
+/*
+  CNC_machine class stores the position of the tool head as well as other
+  specification's
+
+  It can simulate a given gcode command i.e. GOO, GO1, GO2, GO3
+
+  note: gcode arcs should be equal or less than 45 deg for best results
+        otherwise bugs might arrise
+*/
 class CNC_machine{
   constructor(_pitch = 1, _step_angle = 1.8){
     this.pos = new Point(0, 0, 0);
@@ -65,7 +74,7 @@ class CNC_machine{
         dir_cor_y = this.pos.direction(gcode_object.coord, 'y');
       }
 
-      //If the float position is within an error term of the next position
+      //If the float position is within an error term of a step_distance divsions
 
       if(Math.abs(float_p.x - this.pos.x - dir_cor_x*this.step_distance.x) < this.error){
         if(this.pos.direction(float_p, 'x') > 0){
@@ -98,7 +107,7 @@ class CNC_machine{
   }
 }
 
-
+//Point class has x, y, z variables and can perform functions with other points
 class Point{
 
   constructor(_x = 0, _y = 0, _z = 0){
@@ -255,7 +264,7 @@ class Point{
     return Math.sqrt((p.x - this.x)*(p.x - this.x) + (p.y - this.y)*(p.y - this.y));
   }
 }
-let test = 0
+
 let cos_tan = (m) => {
   return Math.sqrt(1 / (1 + m*m))
 }
@@ -263,64 +272,4 @@ let sin_tan = (m) =>{
   return m*cos_tan(m)
 }
 
-var stepBuffer = ""
-var frameRate = 100
-var running = false
-var h = [];
-var l = 0;
-function animate(_frameRate, _stepBuffer){
-  stepBuffer += _stepBuffer
-  if(_stepBuffer.length>0){
-    h.push(_stepBuffer.length)
-  }
-  if(!running){
-    frameRate = _frameRate;
-    window.requestAnimationFrame(animateStep)
-  }
-
-}
-var z = 0;
-var svgCount = 10;
-function animateStep(){
-  var millBit = document.getElementById('millBit')
-  var svg = document.getElementById('path')
-  var x = parseFloat(millBit.getAttribute('cx'))
-  var y = parseFloat(millBit.getAttribute('cy'))
-  for(var i = 0; i < frameRate; i++){
-    if(i >= stepBuffer.length){
-
-      return
-    }
-    h[0]--;
-    if(h[0] == 0){
-      h.shift()
-      var list = document.getElementsByTagName('H6');
-      list[l].style.setProperty('background', 'transparent')
-      l++
-      list[l].style.setProperty('background', 'yellow')
-    }
-    x += (stepBuffer[i] == 'x') ? mycnc.step_distance.x : 0;
-    y += (stepBuffer[i] == 'y') ? mycnc.step_distance.y: 0;
-    x -= (stepBuffer[i] == 's') ? mycnc.step_distance.x : 0;
-    y -= (stepBuffer[i] == 'h') ? mycnc.step_distance.y: 0;
-    z += (stepBuffer[i] == 'z') ? mycnc.step_distance.z : 0;
-    z -= (stepBuffer[i] == 'd') ? mycnc.step_distance.z: 0;
-  }
-  svgCount--;
-  if(svgCount < 0){
-    var path = svg.getAttribute('d') + `L ${x}, ${y}`;
-    svg.setAttribute('d',path)
-    svgCount = 10;
-  }
-  var r = 5-z/10;
-  millBit.setAttribute('cx', x)
-  millBit.setAttribute('cy', y)
-  millBit.setAttribute('rx', r)
-  millBit.setAttribute('ry', r)
-
-  if(stepBuffer.length > 1){
-    stepBuffer = stepBuffer.substring(frameRate);
-    window.requestAnimationFrame(animateStep);
-  }
-}
 console.log('CNC_machine package used');
