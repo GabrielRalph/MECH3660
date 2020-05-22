@@ -4,26 +4,28 @@ var millBit = null;
 window.addEventListener('load', () => {
   svg = document.getElementById('svgid')
   millBit = document.getElementById('millBit')
-  getGCODE('310275433.NC', (gcode) => {
-    lastRow = gcode[0].row_el;
-    animateCommands(gcode)
-  })
+  var gcode = getGCODE('code', 'commands-table')
+  lastRow = gcode[0].row_el;
+  animateCommands(gcode)
 
 })
 
-
-
-var frameRate = 200
 var lastRow = ''
+
 let animateCommands = (list) => {
+  // If commands list is empty return
   if(list.length <= 1){
     return
   }
-  if(list[0].commands.indexOf('G00 ') == -1&&list[0].commands.indexOf('G01 ') == -1&&list[0].commands.indexOf('G02 ') == -1&&list[0].commands.indexOf('G03 ') == -1){
+
+  // If the command is not movement related remove command from list and recurse
+  if("00 01 02 03".indexOf(list[0].commands.g) == -1){
     list.shift()
     animateCommands(list)
     return
   }
+
+  // Set visual elements at start
   lastRow.style.setProperty('background', 'transparent')
   var xyz = ['x', 'y', 'z']
   var wlf = lastRow.getElementsByTagName('H5');
@@ -33,8 +35,13 @@ let animateCommands = (list) => {
   lastRow = list[0].row_el
   lastRow.style.setProperty('background', 'yellow')
   lastRow.scrollIntoView({behavior: "smooth", block: "center"});
-  var steps = mycnc.G0(list[0].commands)
-    list.shift()
+
+  feed = list[0].commands.f;
+  // Get the steps as a string of x,s,y,h,z,d characters
+  var steps = mycnc.G0(list.shift().commands);
+  if(steps.mode.indexOf('rapid') != -1) feed = 500;
+
+  // Create svg path element
   var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   svg.appendChild(path)
   if(steps.mode.indexOf('rapid') == -1){
@@ -44,17 +51,46 @@ let animateCommands = (list) => {
     path.setAttribute('stroke','rgba(0,0,0,0.5)')
     path.setAttribute('stroke-width','0.5')
   }
-  path.setAttribute('fill','none')
-  window.requestAnimationFrame(() => {
-    animateSteps(steps, path, () => {
+
+  // Initiate the request animation from recursion
+  window.requestAnimationFrame((timestamp) => {
+    // For each frame animateSteps
+    animateSteps(steps, path, timestamp, () => {
+      // When all steps are animated, move to the next command and repeat
       animateCommands(list)
     })
   })
 }
+
+
+
+var speed = 5;
+var feed = 0;
 var stepcount = 0;
 var pos = new Point()
-let animateSteps = (steps, pathObject, callback) => {
-  for(var i = 0; i < frameRate; i++){
+var start = null;
+var ogStart = null;
+let animateSteps = (steps, pathObject, timestamp, callback) => {
+
+  var stepsPerFrame = 10;
+  if (!!start) {
+    stepsPerFrame = ((timestamp - start)*(feed/60/1000/mycnc.step_distance.x));
+  }else{
+    ogStart = timestamp
+  }
+  start = timestamp;
+
+  millis = Math.round((timestamp - ogStart)*speed);
+  var seconds = Math.floor(millis/1000)
+  millis -= seconds*1000;
+  var minutes = Math.floor(seconds/60);
+  seconds -= minutes*60;
+
+  var timeString = `Run time: ${minutes<10?0:''}${minutes}:${seconds<10?0:''}${seconds}`
+  document.getElementById('time').innerHTML = timeString;
+
+
+  for(var i = 0; i < stepsPerFrame*speed; i++){
     stepcount++;
     document.getElementById('step-count').innerHTML = stepcount + " steps"
     var step = steps.steps[0];
@@ -92,8 +128,8 @@ let animateSteps = (steps, pathObject, callback) => {
     pathObject.setAttribute('stroke', color)
   }
 
-  window.requestAnimationFrame(() => {
-    animateSteps(steps, pathObject, callback)
+  window.requestAnimationFrame((timestamp) => {
+    animateSteps(steps, pathObject, timestamp, callback)
   });
 }
 

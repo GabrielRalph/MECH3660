@@ -19,8 +19,7 @@ class CNC_machine{
     console.log(this.pos);
   }
 
-  G0(gcode){
-    var gcode_object = this.gcode(gcode)
+  G0(gcode_object){
     var mode = gcode_object.g == '00'?'rapid':'feed'
     var steps = "";
     var last_distance = this.pos.distance(gcode_object.coord);
@@ -38,8 +37,8 @@ class CNC_machine{
     }
 
     var m = this.pos.gradient(gcode_object.coord).xy;
-    if(this.pos.z != gcode_object.coord.z){
 
+    if(this.pos.z != gcode_object.coord.z){
       var steps = Math.round(Math.abs(gcode_object.coord.z - this.pos.z)/this.step_distance.z)
       if(this.pos.z > gcode_object.coord.z){
         this.pos.z = gcode_object.coord.z
@@ -49,6 +48,7 @@ class CNC_machine{
         return {steps: 'z'.repeat(steps), mode: 'Z'+mode}
       }
     }
+
     for(var i = 0; next_distance < last_distance; i++){
       last_steps = 0;
       this.pos.setToPoint(future_p);
@@ -96,21 +96,6 @@ class CNC_machine{
     this.stepBuffer += steps;
     return {steps: steps, mode: mode}
   }
-
-  gcode(gcode){
-    gcode = gcode.split(' ')
-    var gcode_object = {}
-    for(var i in gcode){
-      gcode_object[gcode[i][0]] = gcode[i].substring(1)
-    }
-    var x = gcode_object.X?parseFloat(gcode_object.X):this.pos.x;
-    var y = gcode_object.Y?parseFloat(gcode_object.Y):this.pos.y;
-    var z = gcode_object.Z?parseFloat(gcode_object.Z):this.pos.z;
-    var r = gcode_object.R?parseFloat(gcode_object.R):0;
-    gcode_object = {g: gcode_object.G, coord: new Point(x, y, z), r: r}
-    return gcode_object
-  }
-
 }
 
 
