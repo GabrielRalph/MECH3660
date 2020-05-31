@@ -29,7 +29,12 @@
         Operations
       </h1>
       <p>
-        Bellow I have used javascript to simulate the process of moveing the router bit to the desired location. To do so I simulate a floating point position for the bit and only invoke a step if the floating point aproaches a division of \(ds = 0.005mm\), in wich case the a step will occur. The process will continue until the bit can move no closer to the desired location. This condition does create some bugs while performing circular motion of an arc thats subtending angle is greater than \(45^{\circ}\) as there can be points on the arc that have a greater distance to the end point than the distance of the chord.<br /><br />The simulation bellow is running at 5x speed
+        Bellow I have used javascript to simulate the process of moveing the router bit to the desired location. To do so I simulate a floating point position for the bit and only invoke a step if the floating point aproaches a division of \(ds = 0.005mm\), in wich case the a step will occur. The process will continue until the bit can move no closer to the desired location. This condition does create some bugs while performing circular motion of an arc thats subtending angle is greater than \(45^{\circ}\) as there can be points on the arc that have a greater distance to the end point than the distance of the chord.
+      </p>
+      <div class = "pagebreak"></div>
+      <h1>Simulation</h1>
+      <p>
+        The simulation bellow is running visually at 5x speed.
       </p>
       <table class = "gcode_utility">
         <tr>

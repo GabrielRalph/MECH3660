@@ -107,6 +107,7 @@ class CNC_machine{
   }
 }
 
+console.log(12%8);
 //Point class has x, y, z variables and can perform functions with other points
 class Point{
 
